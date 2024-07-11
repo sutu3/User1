@@ -1,6 +1,10 @@
 import React from "react";
-import { type } from "../Redux/Selector";
+import { filtertype, type } from "../Redux/Selector";
 import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
+import FilterScice from "../Redux/FilterSlice";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTableCellsLarge } from "@fortawesome/free-solid-svg-icons";
 const img = [
   "https://dosi-in.com/images/detailed/41/lnc_tr%C6%A1n_3.png?gidzl=xvP_HG4T0qZZYNP21mC4JEAESa8QLm8Phzno5nrJK1gjq7SLJLe0IwhNSKHA3Wn9hOruJ3RMkaGz2naCIG",
   "https://th.bing.com/th/id/R.93e656c2089cb6fb97d3c87deec491dd?rik=neCpfFwo3x%2bovA&riu=http%3a%2f%2fproduct.hstatic.net%2f1000199383%2fproduct%2fao-so-mi-trang-nam-aristino-alsw17-ps03_master.jpg&ehk=ZZyxqSVZDztjqWVsLqBqeLhxem00LDnGL50lokVjaV4%3d&risl=&pid=ImgRaw&r=0",
@@ -18,16 +22,27 @@ const img = [
 
 ];
 const Category = () => {
+  const dispatch=useDispatch()
+  const filter=useSelector(filtertype)
   const Type = useSelector(type);
   console.log(Type);
   return (
     <div className="w-full flex flex-row gap-5 h-36 bg-white justify-center">
+    <div className={`w-20 flex flex-col justify-center items-center ${filter==''?'text-red-300':''}`} onClick={()=>{
+          dispatch(FilterScice.actions.filtertype(''))
+        }}>
+        <div className="w-16 h-16 flex justify-center items-center"><FontAwesomeIcon size="2xl" icon={faTableCellsLarge} /></div>
+          <div className="text-center font-bold text-xs">ALL</div>
+        </div>
       {Type.map((el, index) => (
-        <div className="w-20 flex flex-col justify-center items-center">
+        <div key={index} className={`w-20 flex flex-col justify-center items-center ${filter==el.typeofproduct?'text-red-300':''}`} onClick={()=>{
+          dispatch(FilterScice.actions.filtertype(el.typeofproduct))
+        }}>
         <div className="w-16 h-16 object-cover rounded-full bg-cover bg-no-repeat bg-center" style={{backgroundImage:`url(${img[index]})`}}></div>
           <div className="text-center font-bold text-xs">{el.typeofproduct}</div>
         </div>
       ))}
+      
     </div>
   );
 };

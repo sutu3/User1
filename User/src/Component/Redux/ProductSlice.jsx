@@ -4,7 +4,7 @@ const url='http://26.232.136.42:8080/api'
 const ProductSlice=createSlice({
     name:'product',
     initialState:{
-        products:localStorage.getItem('product')?JSON.parse(localStorage.getItem('prduct')): [],
+        products:localStorage.getItem('product')?JSON.parse(localStorage.getItem('product')): [],
         type:[]
     },
     extraReducers:(builder)=>{
@@ -19,6 +19,7 @@ const ProductSlice=createSlice({
 
     }
 })
+//Thằng này gọi api lấy dữ liệu
 export const FetchInfom = () => {
   return async function check(dispatch, getState) {
     await dispatch(ProductFecth());
@@ -26,6 +27,7 @@ export const FetchInfom = () => {
     await dispatch(TypeOfProductFecth());
   };
 };
+//Thằng này gọi api lấy dữ liệu product
 export const ProductFecth = createAsyncThunk(
   "product/ProductFecth",
   async () => {
@@ -38,6 +40,7 @@ export const ProductFecth = createAsyncThunk(
     return data;
   }
 );
+//Thằng này gọi api lấy dữ liệu Type
 export const TypeOfProductFecth = createAsyncThunk(
   "product/TypeOfProductFecth",
   async () => {

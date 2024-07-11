@@ -10,16 +10,81 @@ import {
 } from "@nextui-org/react";
 import React, { useState } from "react";
 import { toast } from "react-toastify";
+import { useSelector } from "react-redux";
+import { infor, orderNoneSignup } from "../Redux/Selector";
+import { useDispatch } from "react-redux";
+import OrderSlice, { CreateOrderItem } from "../Redux/OrderSlice";
 const Product = ({ product }) => {
-  const [colorbtn, setColorbtn] = useState(
-    Array.from(new Set(product.categories.map((el) => el.color)))
+  const order = useSelector(orderNoneSignup);
+  const Infor = useSelector(infor);
+  const dispatch = useDispatch();
+  const initialColors = Array.from(
+    new Set(product.categories.map((el) => el.color))
   );
-  const [sizebtn, setsizebtn] = useState(
-    product.categories.filter((el)=>el.color==colorbtn[0]).map((el)=>el.sizeEnum)
-  );
-  const [size, setsize] = useState(sizebtn[0]);
-  const [color, setcolor] = useState(colorbtn[0]);
+  const [colorbtn, setcolorbtn] = useState(initialColors);
+
+  const initialSizes = product.categories
+    .filter((el) => el.color === initialColors[0])
+    .map((el) => el.sizeEnum);
+  const [sizebtn, setsizebtn] = useState(initialSizes);
+
+  const [size, setsize] = useState(initialSizes[0]);
+  const [color, setcolor] = useState(initialColors[0]);
   const [display, setdisplay] = useState(false);
+  const handlepushItem = async () => {
+    const data = product.categories.find(
+      (el) => el.color == color && el.sizeEnum == size
+    );
+    const object = {
+      product_name: product.name,
+      product_price: data.price_sale,
+      price_base: data.price_base,
+      quantity: 1,
+      productID: product.product_id,
+      sizeID: data.catetorySize,
+      colorID: data.catetoryColor,
+      createAt: new Date().toISOString(),
+      updatedAt:'',
+      color:data.color,
+      size:data.sizeEnum
+    };
+    const arr = order.find(
+      (el) =>
+        el.sizeID == object.sizeID &&
+        el.colorID == object.colorID &&
+        el.productID == object.productID
+    );
+    console.log(Infor.account_id!=undefined);
+    if (!arr) {
+      if (Object.entries(Infor).length!=0) {
+        await dispatch(
+          CreateOrderItem({
+            ...object,
+            account_id: Infor.account_id,
+          })
+        );
+      } else {
+        dispatch(OrderSlice.actions.pushOrder([...order, object]));
+      }
+    } else {
+      const arr1 = {
+        ...arr,
+        quantity: arr.quantity + 1,
+        create_at: new Date().toISOString(),
+      };
+      const arr2 = order.map((el) => {
+        if (
+          el.sizeID === arr1.sizeID &&
+          el.colorID === arr1.colorID &&
+          el.productID === arr1.productID
+        ) {
+          return arr1;
+        }
+        return el;
+      });
+      dispatch(OrderSlice.actions.pushOrder(arr2));
+    }
+  };
   return (
     <div>
       <Card className=" w-[280px] rounded-xl bg-white">
@@ -33,8 +98,7 @@ const Product = ({ product }) => {
             }}
             className="relative bg-center bg-no-repeat bg-cover w-full h-[250px] rounded-2xl"
             style={{
-              backgroundImage:
-                `url(${product.imagesMap[0].image_urlString})`,
+              backgroundImage: `url(${product.imagesMap[0].image_urlString})`,
             }}
           >
             <div
@@ -67,13 +131,15 @@ const Product = ({ product }) => {
           <div className="flex flex-row gap-3 flex-wrap">
             {colorbtn.map((el) => (
               <div
-              key={el}
+                key={el}
                 onClick={() => {
-                  const arr=product.categories.filter((el1)=>el1.color==el).map((el1)=>el1.sizeEnum)
-                  console.log(arr)
+                  const arr = product.categories
+                    .filter((el1) => el1.color == el)
+                    .map((el1) => el1.sizeEnum);
+                  console.log(el);
                   setsizebtn(arr);
                   setcolor(el);
-                  setsize(arr[0])
+                  setsize(arr[0]);
                 }}
                 style={{ backgroundColor: el }}
                 className={`border-[2px] ${
@@ -84,32 +150,67 @@ const Product = ({ product }) => {
               ></div>
             ))}
           </div>
-          <p className="font-[400] text-slate-500 font-xs mt-4">{product.name}</p>
-          <p className="font-bold text-slate-900">{!product.categories.find((el)=>el.color==color&&el.sizeEnum==size).price_sale==0?product.categories.find((el)=>el.color==color&&el.sizeEnum==size).price_sale.toLocaleString("vi-VN")+' vnd':'Hết Hàng'}</p>
+          <p className="font-[400] text-slate-500 font-xs mt-4">
+            {product.name}
+          </p>
+          <p className="font-bold text-slate-900">
+            {!product.categories.find(
+              (el) => el.color == color && el.sizeEnum == size
+            ).price_sale == 0
+              ? product.categories
+                  .find((el) => el.color == color && el.sizeEnum == size)
+                  .price_sale.toLocaleString("vi-VN") + " vnd"
+              : "Hết Hàng"}
+          </p>
         </CardBody>
         <CardFooter className="flex w-1/2 p-0 pb-2 m-auto mt-0">
-          <Button onClick={()=>{
-           toast(<div className="w-full h-full flex flex-col">
-           <p className="p-2 border-b-[2px] border-slate-200 w-full">Đã thêm vào giỏ hàng</p>
-           <div className="w-full flex flex-row mt-4 gap-3 mb-3">
-              <img src={product.imagesMap[0].image_urlString} className="rounded-xl"  alt="icon" style={{ width: '60px', height: '60px' }}/>,
-              <div className="flex flex-col">
-                <p className="text-xs font-bold font-mono">{product.name}</p>
-                <p className="flex flex-row justify-start items-center">{size}/ <div style={{backgroundColor:color}} className="rounded-xl w-8 h-4"></div> </p>
-              </div>
-           </div>
-              <Button className="border-[2px] border-slate-400 w-[200px] flex m-auto">Vào Giỏ Hàng</Button>
-
-           </div>, {
-      position: "top-right",
-      autoClose: 1500,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: false,
-      draggable: true,
-      progress: undefined,
-    });
-          }}>Add to cart</Button>
+          <Button
+            onClick={() => {
+              handlepushItem();
+              toast(
+                <div className="w-full h-full flex flex-col">
+                  <p className="p-2 border-b-[2px] border-slate-200 w-full">
+                    Đã thêm vào giỏ hàng
+                  </p>
+                  <div className="w-full flex flex-row mt-4 gap-3 mb-3">
+                    <img
+                      src={product.imagesMap[0].image_urlString}
+                      className="rounded-xl"
+                      alt="icon"
+                      style={{ width: "60px", height: "60px" }}
+                    />
+                    ,
+                    <div className="flex flex-col">
+                      <p className="text-xs font-bold font-mono">
+                        {product.name}
+                      </p>
+                      <p className="flex flex-row justify-start items-center">
+                        {size}/{" "}
+                        <div
+                          style={{ backgroundColor: color }}
+                          className="rounded-xl w-8 h-4"
+                        ></div>{" "}
+                      </p>
+                    </div>
+                  </div>
+                  <Button className="border-[2px] border-slate-400 w-[200px] flex m-auto">
+                    Vào Giỏ Hàng
+                  </Button>
+                </div>,
+                {
+                  position: "top-right",
+                  autoClose: 1500,
+                  hideProgressBar: false,
+                  closeOnClick: true,
+                  pauseOnHover: false,
+                  draggable: true,
+                  progress: undefined,
+                }
+              );
+            }}
+          >
+            Add to cart
+          </Button>
         </CardFooter>
       </Card>
     </div>
