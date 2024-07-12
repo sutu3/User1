@@ -35,7 +35,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { toast } from "react-toastify";
 import { useDispatch } from "react-redux";
-import {
+import AccountSlice, {
   CheckAccount,
   CheckLogin,
   CreateAccount,
@@ -491,6 +491,7 @@ export default function App() {
                     className="border-[2px] border-red-400 text-red-400"
                     onClick={() => {
                       localStorage.removeItem("infor");
+                      dispatch(AccountSlice.actions.updateInfor({}))
                       setdisplay(false);
                       const arr = order.map((el) => ({
                         product_name: el.product_name,
