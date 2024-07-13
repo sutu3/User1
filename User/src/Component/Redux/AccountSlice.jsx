@@ -208,6 +208,42 @@ export const GetAccountInfor = createAsyncThunk(
     }
   }
 );
+//thằng này kiểm tra email đã có trong db chưa nếu chưa thì tao account ko có pass và 
+//trả về id account đó nếu có thì trả về id account đó
+export const CheckEmailV2 = createAsyncThunk(
+  "account/CheckEmailV2",
+  async (payload, { rejectWithValue }) => {
+    try {
+      const res = await fetch(`${url}/account/checkEmail`, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        method: "POST",
+        body:JSON.stringify(payload)
+      });
+
+      if (!res.ok) {
+        const error = await res.json();
+        toast.error(
+          `${new Error(error.message || "Failed to create product version")}`,
+          {
+            position: "top-right",
+            autoClose: 2000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: false,
+            draggable: true,
+            progress: undefined,
+          }
+        );
+      }
+      const data = await res.json();
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
 export const CheckLogin = (payload) => {
   return async function check(dispatch, getState) {
     const checkemail = await dispatch(CheckAccount(payload.email));

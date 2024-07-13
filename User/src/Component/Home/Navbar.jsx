@@ -503,6 +503,8 @@ export default function App() {
                         productID: el.productID,
                         sizeID: el.sizeID,
                         colorID: el.colorID,
+                        color:el.color,
+                        size:el.size,
                         createAt:el.updatedAt?el.updatedAt:el.createdAt,
                       }));
                       dispatch(OrderSlice.actions.pushOrder(arr))
@@ -569,9 +571,10 @@ export default function App() {
                   <div>
                     <div>
                       <Input
-                        value={userUp.phone}
+                        value={userUp.opt}
                         onChange={(e) => {
-                          setuserUp({ ...userUp, phone: e.target.value });
+                          // setuserUp({ ...userUp, phone: e.target.value });
+                          setopt(e.target.value)
                         }}
                         key={"phone"}
                         type="number"

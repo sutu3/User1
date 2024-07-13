@@ -265,6 +265,7 @@ const Cart = ({ item, product }) => {
                 <div className="w-full flex justify-end">
                   <Button
                     onClick={async () => {
+                      if (Object.entries(Infor).length!= 0) {
                       await dispatch(
                         UpdateOrderItemStyle({
                           order_items_id: item.order_items_id,
@@ -272,6 +273,11 @@ const Cart = ({ item, product }) => {
                           colorID: product.categories.find((el)=>el.catetoryProduct==item.productID&&el.sizeEnum== selectedKeysSize&&el.color==selectedKeysColor).catetoryColor,
                         })
                       );
+                      }
+                      else{
+                        const newdata =product.categories.find((el)=>el.catetoryProduct==item.productID&&el.sizeEnum== selectedKeysSize&&el.color==selectedKeysColor) 
+                        const olddata=item
+                      }
                     }}
                   >
                     Update
