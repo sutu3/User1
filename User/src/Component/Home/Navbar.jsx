@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import {
   Navbar,
   NavbarBrand,
   NavbarContent,
   NavbarItem,
-  Link,
   Input,
   DropdownItem,
   DropdownTrigger,
@@ -184,7 +184,9 @@ export default function App() {
       <div className="w-[400px] flex flex-row h-full items-center gap-5 justify-start">
         {arr.map((el, index) => (
           <div key={index} className="font-bold">
+          <Link to={el.link}>
             {el.name}
+            </Link>
           </div>
         ))}
       </div>
@@ -254,7 +256,7 @@ export default function App() {
                 <div className="w-full flex justify-between items-center">
                   <div>{order.length} Sản Phẩm</div>
                   <div className="font-mono text-lg hover:text-[#6542fd] text-blue-300">
-                    Xem tất cả
+                    <Link to={'/cart'}>Xem tất cả</Link>
                   </div>
                 </div>
               </DropdownItem>

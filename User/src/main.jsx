@@ -7,6 +7,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Provider } from "react-redux";
 import store from "./Component/Redux/Store.jsx";
 import Home from './Component/Home/index'
+import Cart from './Component/Cart/index'
 ReactDOM.createRoot(document.getElementById("root")).render(
   <NextUIProvider>
     <Provider store={store}>
@@ -15,6 +16,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
           <Routes>
             <Route path="/" element={<App />}>
               <Route path='/' element={<Home/>}/>
+              <Route path="/cart" element={<Cart/>}/>
             </Route>
           </Routes>
         </BrowserRouter>
