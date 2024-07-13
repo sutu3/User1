@@ -1,204 +1,81 @@
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Input } from "@nextui-org/react";
+import { Input, Progress, ScrollShadow } from "@nextui-org/react";
 import React from "react";
-
+import Cart from "./Cart";
+import { orderNoneSignup, Product } from "../Redux/Selector";
+import { useSelector } from "react-redux";
+const arr = [
+  { name: "Cart", index: 1 },
+  { name: "CheckOut", index: 2 },
+  { name: "Payment", index: 3 },
+];
 const index = () => {
+  const order = useSelector(orderNoneSignup);
+  const product = useSelector(Product);
   return (
-    <div className="bg-[#f8f7f5] w-full h-full -translate-y-4 flex flex-row justify-around">
-      <div className="w-[50%] mt-10 flex flex-col gap-5">
-        <div>Delivery Information</div>
-        <div className="bg-white w-full flex-col flex p-4 gap-4 pt-10">
-          <div className="w-full flex flex-row justify-between">
-            <div className="w-[48%]">
-              <Input
-                label="Name"
-                isClearable
-                radius="lg"
-                classNames={{
-                  label: "text-black/50 dark:text-white/90 p-3 pb-10 pl-0",
-                  input: [
-                    "bg-transparent ",
-                    "text-black/90 dark:text-white/90",
-                    "placeholder:text-default-700/50 dark:placeholder:text-white/60",
-                  ],
-                  innerWrapper: "bg-transparent",
-                  inputWrapper: [
-                    "shadow-inner border-[2px] border-slate-200 rounded-md",
-                    "bg-default-200/50",
-                    "dark:bg-default/60",
-                    "backdrop-blur-xl",
-                    "backdrop-saturate-200",
-                    "hover:bg-default-200/70",
-                    "dark:hover:bg-default/70",
-                    "group-data-[focus=true]:bg-default-200/50",
-                    "dark:group-data-[focus=true]:bg-default/60",
-                    "!cursor-text",
-                  ],
-                }}
-                placeholder="Enter Your Name"
-              />
-            </div>
-            <div className="w-[48%]">
-              <Input
-                label="Moblie Number"
-                isClearable
-                radius="lg"
-                classNames={{
-                  label: "text-black/50 dark:text-white/90 p-3 pb-10 pl-0",
-                  input: [
-                    "bg-transparent ",
-                    "text-black/90 dark:text-white/90",
-                    "placeholder:text-default-700/50 dark:placeholder:text-white/60",
-                  ],
-                  innerWrapper: "bg-transparent",
-                  inputWrapper: [
-                    "shadow-inner border-[2px] border-slate-200 rounded-md",
-                    "bg-default-200/50",
-                    "dark:bg-default/60",
-                    "backdrop-blur-xl",
-                    "backdrop-saturate-200",
-                    "hover:bg-default-200/70",
-                    "dark:hover:bg-default/70",
-                    "group-data-[focus=true]:bg-default-200/50",
-                    "dark:group-data-[focus=true]:bg-default/60",
-                    "!cursor-text",
-                  ],
-                }}
-                type="number"
-                placeholder="Enter Your number"
-              />
-            </div>
+    <div className="bg-[#f8f7f5] w-full h-screen -translate-y-4 flex flex-col justify-around">
+      <div className="w-full h-full flex flex-row justify-around">
+        <div className="w-[60%] h-full flex flex-col mt-10">
+          <div className="font-serif text-[50px]">Cart</div>
+          <div className="w-[500px] flex flex-row gap-2">
+            {arr.map((el, index) => (
+              <div key={index} className="flex flex-row items-center gap-2">
+                <span>{el.name}</span>
+                {index != arr.length - 1 && (
+                  <Progress
+                    size="sm"
+                    value={100}
+                    className="w-[100px]"
+                    classNames={{
+                      base: "max-w-md",
+                      track: "drop-shadow-md border border-default",
+                      indicator: "bg-gradient-to-r from-pink-500 to-yellow-500",
+                      label: "tracking-wider font-medium text-default-600",
+                      value: "text-foreground/60",
+                    }}
+                  />
+                )}
+              </div>
+            ))}
           </div>
-          <div className="w-full flex flex-row justify-between">
-            <div className="w-[48%]">
-              <Input
-                label="Email"
-                isClearable
-                radius="lg"
-                classNames={{
-                  label: "text-black/50 dark:text-white/90 p-3 pb-10 pl-0",
-                  input: [
-                    "bg-transparent ",
-                    "text-black/90 dark:text-white/90",
-                    "placeholder:text-default-700/50 dark:placeholder:text-white/60",
-                  ],
-                  innerWrapper: "bg-transparent",
-                  inputWrapper: [
-                    "shadow-inner border-[2px] border-slate-200 rounded-md",
-                    "bg-default-200/50",
-                    "dark:bg-default/60",
-                    "backdrop-blur-xl",
-                    "backdrop-saturate-200",
-                    "hover:bg-default-200/70",
-                    "dark:hover:bg-default/70",
-                    "group-data-[focus=true]:bg-default-200/50",
-                    "dark:group-data-[focus=true]:bg-default/60",
-                    "!cursor-text",
-                  ],
-                }}
-                type="email"
-                placeholder="Enter Your Email"
-              />
-            </div>
-            <div className="w-[48%]">
-              <Input
-                label="Address"
-                isClearable
-                radius="lg"
-                classNames={{
-                  label: "text-black/50 dark:text-white/90 p-3 pb-10 pl-0",
-                  input: [
-                    "bg-transparent ",
-                    "text-black/90 dark:text-white/90",
-                    "placeholder:text-default-700/50 dark:placeholder:text-white/60",
-                  ],
-                  innerWrapper: "bg-transparent",
-                  inputWrapper: [
-                    "shadow-inner border-[2px] border-slate-200 rounded-md",
-                    "bg-default-200/50",
-                    "dark:bg-default/60",
-                    "backdrop-blur-xl",
-                    "backdrop-saturate-200",
-                    "hover:bg-default-200/70",
-                    "dark:hover:bg-default/70",
-                    "group-data-[focus=true]:bg-default-200/50",
-                    "dark:group-data-[focus=true]:bg-default/60",
-                    "!cursor-text",
-                  ],
-                }}
-                type="text"
-                placeholder="Enter Your Address"
-              />
-            </div>
-          </div>
-          <div className="w-full flex flex-row justify-between">
-            <div className="w-[48%]">
-              <Input
-                label="State"
-                isClearable
-                radius="lg"
-                classNames={{
-                  label: "text-black/50 dark:text-white/90 p-3 pb-10 pl-0",
-                  input: [
-                    "bg-transparent ",
-                    "text-black/90 dark:text-white/90",
-                    "placeholder:text-default-700/50 dark:placeholder:text-white/60",
-                  ],
-                  innerWrapper: "bg-transparent",
-                  inputWrapper: [
-                    "shadow-inner border-[2px] border-slate-200 rounded-md",
-                    "bg-default-200/50",
-                    "dark:bg-default/60",
-                    "backdrop-blur-xl",
-                    "backdrop-saturate-200",
-                    "hover:bg-default-200/70",
-                    "dark:hover:bg-default/70",
-                    "group-data-[focus=true]:bg-default-200/50",
-                    "dark:group-data-[focus=true]:bg-default/60",
-                    "!cursor-text",
-                  ],
-                }}
-                placeholder="Enter Your State"
-              />
-            </div>
-            <div className="w-[48%]">
-              <Input
-                label="City"
-                isClearable
-                radius="lg"
-                classNames={{
-                  label: "text-black/50 dark:text-white/90 p-3 pb-10 pl-0",
-                  input: [
-                    "bg-transparent ",
-                    "text-black/90 dark:text-white/90",
-                    "placeholder:text-default-700/50 dark:placeholder:text-white/60",
-                  ],
-                  innerWrapper: "bg-transparent",
-                  inputWrapper: [
-                    "shadow-inner border-[2px] border-slate-200 rounded-md",
-                    "bg-default-200/50",
-                    "dark:bg-default/60",
-                    "backdrop-blur-xl",
-                    "backdrop-saturate-200",
-                    "hover:bg-default-200/70",
-                    "dark:hover:bg-default/70",
-                    "group-data-[focus=true]:bg-default-200/50",
-                    "dark:group-data-[focus=true]:bg-default/60",
-                    "!cursor-text",
-                  ],
-                }}
-                type="text"
-                placeholder="Enter Your City"
-              />
-            </div>
+          <div className="w-full flex flex-col">
+            <ScrollShadow
+              hideScrollBar
+              offset={100}
+              orientation="horizontal"
+              className="max-w-[600px] max-h-[500px]"
+            >
+              {order.map((el, index) => (
+                <Cart
+                  key={index}
+                  item={el}
+                  product={product.find(
+                    (el1) => el1.product_id == el.productID
+                  )}
+                />
+              ))}
+            </ScrollShadow>
           </div>
         </div>
-      </div>
-      <div className="w-[40%] mt-10 flex flex-col gap-5">
-        <div>Delivery Information</div>
-        <div className="bg-white w-full flex-col flex p-4 gap-4 pt-10">
-d
+        <div className="bg-[#f7f0e8] w-[30%] h-[300px] gap-4 mt-20 rounded-3xl -translate-x-10 flex p-5 flex-col">
+          <div className="text-2xl font-bold font-mono">Order Summary</div>
+          <div className="w-full justify-between flex-row flex">
+            <div className="font-serif text-xl">Sub Total</div>
+            <div className="font-bold">$232.000</div>
+          </div>
+          <div className="w-full justify-between flex-row flex">
+            <div className="font-serif text-xl">Tax</div>
+            <div className="font-bold">0</div>
+          </div>
+          <div className="w-full justify-between flex-row flex">
+            <div className="font-serif text-xl">Shipping</div>
+            <div className="font-bold text-[#ffa500]" >Free</div>
+          </div>
+          <div className="w-full justify-between flex-row flex">
+            <div className="font-serif text-xl">Total</div>
+            <div className="font-bold  text-2xl" >$232.000</div>
+          </div>
         </div>
       </div>
     </div>

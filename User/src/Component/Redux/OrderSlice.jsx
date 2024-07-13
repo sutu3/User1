@@ -51,6 +51,17 @@ const OrderSlice = createSlice({
         localStorage.setItem("order", JSON.stringify(state.order));
       }
     })
+    .addCase(UpdateOrderItemStyle.fulfilled,(state,action) => {
+      const index = state.order.findIndex((el) =>
+        el.order_items_id === action.payload.order_items_id
+      );
+      if (index!== -1) {
+        state.order = state.order.map((el) =>
+          el.order_items_id === action.payload.order_items_id? {...action.payload} : el
+        );
+        localStorage.setItem("order", JSON.stringify(state.order));
+      }
+    })
     .addCase(UpdateOrderItem.fulfilled,(state,action)=>{
         const index = state.order.findIndex((el) =>
         el.productID === action.payload.productID &&
@@ -125,6 +136,45 @@ export const UpdateOrderItem = createAsyncThunk(
     try {
       const res = await fetch(
         `${url}/ordersitem/updateorderitemfull`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+    
+          body: JSON.stringify(payload),
+          method: "PUT",
+        }
+      );
+      if (!res.ok) {
+        const error = await res.json();
+        toast.error(
+          `${new Error(error.message || "Failed to create order item")}`,
+          {
+            position: "top-right",
+            autoClose: 2000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: false,
+            draggable: true,
+            progress: undefined,
+          }
+        );
+      }
+      const data = await res.json();
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+//thằng này update color và size của item
+export const UpdateOrderItemStyle = createAsyncThunk(
+  "order/UpdateOrderItemStyle",
+  async (payload, { rejectWithValue }) => {
+    console.log(payload)
+    try {
+      const res = await fetch(
+        `${url}/ordersitem/updateorderitem`,
         {
           headers: {
             "Content-Type": "application/json",
