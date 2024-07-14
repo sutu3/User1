@@ -32,6 +32,8 @@ import {
   faPlus,
   faRightToBracket,
   faTrash,
+  faTruckRampBox,
+  faUser,
 } from "@fortawesome/free-solid-svg-icons";
 import { toast } from "react-toastify";
 import { useDispatch } from "react-redux";
@@ -158,6 +160,14 @@ export default function App() {
         draggable: true,
         progress: undefined,
       });
+      setopt(false),
+        setuserUp({
+          email: "",
+          pass: "",
+          name: "",
+          phone: 0,
+        });
+      setuserIn({ email: "", pass: "" });
       onClose();
     }
   };
@@ -184,9 +194,7 @@ export default function App() {
       <div className="w-[400px] flex flex-row h-full items-center gap-5 justify-start">
         {arr.map((el, index) => (
           <div key={index} className="font-bold">
-          <Link to={el.link}>
-            {el.name}
-            </Link>
+            <Link to={el.link}>{el.name}</Link>
           </div>
         ))}
       </div>
@@ -256,7 +264,7 @@ export default function App() {
                 <div className="w-full flex justify-between items-center">
                   <div>{order.length} Sản Phẩm</div>
                   <div className="font-mono text-lg hover:text-[#6542fd] text-blue-300">
-                    <Link to={'/cart'}>Xem tất cả</Link>
+                    <Link to={"/cart"}>Xem tất cả</Link>
                   </div>
                 </div>
               </DropdownItem>
@@ -475,13 +483,24 @@ export default function App() {
                       }}
                     />
                   </DropdownItem>
-                  <DropdownItem key="dashboard">Dashboard</DropdownItem>
-                  <DropdownItem key="settings">Settings</DropdownItem>
+                  <DropdownItem
+                    key="Account"
+                    endContent={<FontAwesomeIcon icon={faUser} />}
+                  >
+                  <Link to={'infor'}>Account Information</Link>
+                    
+                  </DropdownItem>
+                  <DropdownItem
+                    key="Orders"
+                    endContent={<FontAwesomeIcon icon={faTruckRampBox} />}
+                  >
+                    Orders
+                  </DropdownItem>
                   <DropdownItem
                     key="new_project"
-                    endContent={<FontAwesomeIcon icon={faPlus} />}
+                    endContent={<FontAwesomeIcon icon={faCartShopping} />}
                   >
-                    New Project
+                    Cart
                   </DropdownItem>
                 </DropdownSection>
                 <DropdownSection aria-label="Help & Feedback">
@@ -493,7 +512,7 @@ export default function App() {
                     className="border-[2px] border-red-400 text-red-400"
                     onClick={() => {
                       localStorage.removeItem("infor");
-                      dispatch(AccountSlice.actions.updateInfor({}))
+                      dispatch(AccountSlice.actions.updateInfor({}));
                       setdisplay(false);
                       const arr = order.map((el) => ({
                         product_name: el.product_name,
@@ -503,11 +522,11 @@ export default function App() {
                         productID: el.productID,
                         sizeID: el.sizeID,
                         colorID: el.colorID,
-                        color:el.color,
-                        size:el.size,
-                        createAt:el.updatedAt?el.updatedAt:el.createdAt,
+                        color: el.color,
+                        size: el.size,
+                        createAt: el.updatedAt ? el.updatedAt : el.createdAt,
                       }));
-                      dispatch(OrderSlice.actions.pushOrder(arr))
+                      dispatch(OrderSlice.actions.pushOrder(arr));
                     }}
                   >
                     Log Out
@@ -574,7 +593,7 @@ export default function App() {
                         value={userUp.opt}
                         onChange={(e) => {
                           // setuserUp({ ...userUp, phone: e.target.value });
-                          setopt(e.target.value)
+                          setopt(e.target.value);
                         }}
                         key={"phone"}
                         type="number"

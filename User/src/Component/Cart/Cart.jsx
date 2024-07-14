@@ -277,6 +277,9 @@ const Cart = ({ item, product }) => {
                       else{
                         const newdata =product.categories.find((el)=>el.catetoryProduct==item.productID&&el.sizeEnum== selectedKeysSize&&el.color==selectedKeysColor) 
                         const olddata=item
+                        console.log(newdata)
+                        console.log(olddata)
+                        dispatch(OrderSlice.actions.UpdateItemStyle({newdata:newdata,olddata:olddata}))
                       }
                     }}
                   >

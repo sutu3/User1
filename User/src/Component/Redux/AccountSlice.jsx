@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { toast } from "react-toastify";
 import OrderSlice, {
   CreateOrderItem,
+  CreateOrderPrepare,
   DeleteOrderItem,
   UpdateOrderItem,
 } from "./OrderSlice";
@@ -27,6 +28,13 @@ const AccountSlice = createSlice({
       })
       .addCase(GetAccountInfor.fulfilled, (state, action) => {
         state.infor = action.payload;
+        localStorage.setItem("infor", JSON.stringify(state.infor));
+      })
+      .addCase(CreateOrderPrepare.fulfilled, (state, action) => {
+        state.infor = {
+          ...state.infor,
+          orders: [...state.infor.orders, action.payload],
+        };
         localStorage.setItem("infor", JSON.stringify(state.infor));
       });
   },
@@ -208,7 +216,7 @@ export const GetAccountInfor = createAsyncThunk(
     }
   }
 );
-//thằng này kiểm tra email đã có trong db chưa nếu chưa thì tao account ko có pass và 
+//thằng này kiểm tra email đã có trong db chưa nếu chưa thì tao account ko có pass và
 //trả về id account đó nếu có thì trả về id account đó
 export const CheckEmailV2 = createAsyncThunk(
   "account/CheckEmailV2",
@@ -219,7 +227,7 @@ export const CheckEmailV2 = createAsyncThunk(
           "Content-Type": "application/json",
         },
         method: "POST",
-        body:JSON.stringify(payload)
+        body: JSON.stringify(payload),
       });
 
       if (!res.ok) {
@@ -253,61 +261,69 @@ export const CheckLogin = (payload) => {
       );
       if (checkpass.payload != -1) {
         await dispatch(GetAccountInfor(checkpass.payload));
-        const state = getState();
-        const prepareOrder = state.account.infor.orders.find(
+        
+        // Fetch updated state after dispatching GetAccountInfor
+        let state = getState();
+        let prepareOrder = state.account.infor.orders.find(
           (el) => el.status === "Prepare"
         );
-        if (!prepareOrder) return;
+
+        if (!prepareOrder) {
+          await dispatch(
+            CreateOrderPrepare({
+              account_id: state.account.infor.account_id,
+              data: {
+                total_amount: 0,
+                status: "Prepare",
+              },
+            })
+          );
+
+          // Fetch updated state after dispatching CreateOrderPrepare
+          state = getState();
+          prepareOrder = state.account.infor.orders.find(
+            (el) => el.status === "Prepare"
+          );
+        }
 
         const arr = prepareOrder.orderItems;
         const arr2 = state.order.order;
+
+        // Clear order
         dispatch(OrderSlice.actions.pushOrder([]));
-        const state2 = getState();
-        console.log(state2.order.order);
-        console.log(arr);
-        console.log(arr2);
+
+        // Fetch updated state after dispatching pushOrder
+        state = getState();
+
         for (const el of arr2) {
-          const state3=getState();
           const check = arr.find(
             (el1) =>
               el1.productID === el.productID &&
               el1.colorID === el.colorID &&
               el1.sizeID === el.sizeID
           );
-          console.log(check&&arr.length!=0)
-          if (check&&arr.length!=0) {
-            console.log(el);
-            console.log(check);
+
+          if (check && arr.length !== 0) {
             const timeclient = new Date(el.createAt).getTime() / 1000;
+            const timeserve = new Date(check.updatedAt || check.createdAt).getTime() / 1000;
 
-            const timeserve =
-              new Date(check.updatedAt || check.createdAt).getTime() / 1000;
+            const currentOrder = getState().order.order;
 
-            console.log(timeclient);
-            console.log(timeclient);
-            console.log(state3.order.order.length);
-            state3.order.order.length != 0
-              ? dispatch(
-                  OrderSlice.actions.pushOrder([...state3.order.order, check])
-                )
+            currentOrder.length !== 0
+              ? dispatch(OrderSlice.actions.pushOrder([...currentOrder, check]))
               : dispatch(OrderSlice.actions.pushOrder([check]));
 
-            if (timeclient > timeserve) {
-              if (el.quantity !== check.quantity) {
-                await dispatch(
-                  UpdateOrderItem({
-                    order_items_id: check.order_items_id,
-                    product_price: check.product_price,
-                    price_base: check.price_base,
-                    quantity: el.quantity,
-                  })
-                );
-              }
+            if (timeclient > timeserve && el.quantity !== check.quantity) {
+              await dispatch(
+                UpdateOrderItem({
+                  order_items_id: check.order_items_id,
+                  product_price: check.product_price,
+                  price_base: check.price_base,
+                  quantity: el.quantity,
+                })
+              );
             }
-
-            //dispatch(OrderSlice.actions.pushOrder([...getState().order.order, check]));
           } else {
-            console.log(getState())
             await dispatch(
               CreateOrderItem({
                 account_id: getState().account.infor.account_id,
@@ -323,38 +339,28 @@ export const CheckLogin = (payload) => {
             );
           }
         }
-        const arr3 = state.order.order;
-        console.log(arr3);
-        console.log(arr);
-        //dispatch(OrderSlice.actions.pushOrder(arr3));
+
+        const arr3 = getState().order.order;
+
         const removeOrderItems = async () => {
           for (const el of arr) {
-            console.log(el);
-            console.log(
-              arr3.some(
-                (el1) =>
-                  el1.productID == el.productID &&
-                  el1.colorID == el.colorID &&
-                  el1.sizeID == el.sizeID
-              )
-            );
             if (
               !arr3.some(
                 (el1) =>
-                  el1.productID == el.productID &&
-                  el1.colorID == el.colorID &&
-                  el1.sizeID == el.sizeID
+                  el1.productID === el.productID &&
+                  el1.colorID === el.colorID &&
+                  el1.sizeID === el.sizeID
               )
             ) {
               await dispatch(DeleteOrderItem(el.order_items_id));
             }
           }
         };
-        if(arr.length!=0)
-        {
-          removeOrderItems();
+
+        if (arr.length !== 0) {
+          await removeOrderItems();
         }
-        //dispatch(OrderSlice.actions.pushOrder(arr));
+
         toast.success(`Xin chào bạn ${getState().account.infor.username}`, {
           position: "top-right",
           autoClose: 2000,
@@ -388,4 +394,5 @@ export const CheckLogin = (payload) => {
     }
   };
 };
+
 export default AccountSlice;

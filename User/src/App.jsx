@@ -8,8 +8,10 @@ import Navbar from "./Component/Home/Navbar";
 import { useDispatch } from "react-redux";
 import { FetchInfom, ProductFecth } from "./Component/Redux/ProductSlice";
 import { Outlet } from "react-router-dom";
+// import useSocket from "./Component/User/Test";
 function App() {
   const dispatch = useDispatch();
+ 
   useEffect(() => {
     const fetch = async () => {
       await dispatch(FetchInfom());

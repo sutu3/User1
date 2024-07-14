@@ -14,29 +14,33 @@ const OrderSlice = createSlice({
       state.order = action.payload;
       localStorage.setItem("order", JSON.stringify(state.order));
     },
-    UpdateItemStyle: (state, action) => {
-      const index1 = state.order.findIndex(
-        (el) =>
-          el.productID === action.payload.olddata.productID &&
-          el.colorID === action.payload.olddata.colorID &&
-          el.sizeID === action.payload.olddata.sizeID
-      );
-      state.order = state.order.map((el, index) => {
-        index == index1
-          ? {
-              ...el,
-              colorID: action.payload.newdata.catetoryColor,
-              sizeID: action.payload.newdata.catetorySize,
-              color: action.payload.newdata.color,
-              size: action.payload.newdata.sizeEnum,
-              price_base: action.payload.newdata.price_base,
-              product_price: action.payload.newdata.price_sale,
-              updatedAt: new Date().toISOString(),
-            }
-          : el;
-      });
-      localStorage.setItem("order", JSON.stringify(state.order));
-    },
+   UpdateItemStyle: (state, action) => {
+  console.log(action.payload);
+  const index1 = state.order.findIndex(
+    (el) =>
+      el.productID === action.payload.olddata.productID &&
+      el.colorID === action.payload.olddata.colorID &&
+      el.sizeID === action.payload.olddata.sizeID
+  );
+  console.log(index1);
+  if (index1 !== -1) {
+    state.order = state.order.map((el, index) =>
+      index === index1
+        ? {
+            ...el,
+            colorID: action.payload.newdata.catetoryColor,
+            sizeID: action.payload.newdata.catetorySize,
+            color: action.payload.newdata.color,
+            size: action.payload.newdata.sizeEnum,
+            price_base: action.payload.newdata.price_base,
+            product_price: action.payload.newdata.price_sale,
+            updatedAt: new Date().toISOString(),
+          }
+        : el
+    );
+  }
+  localStorage.setItem("order", JSON.stringify(state.order));
+},
     UpdateQuantity: (state, action) => {
       const index = state.order.findIndex(
         (el) =>
@@ -231,9 +235,48 @@ export const UpdateOrderItemStyle = createAsyncThunk(
     }
   }
 );
+
+//thằng này tạo order có trạng thái prepare 
+export const CreateOrderPrepare = createAsyncThunk(
+  "order/CreateOrderPrepare",
+  async (payload, { rejectWithValue }) => {
+    try {
+      const res = await fetch(
+        `${url}/orders/createOrderPrepare/${payload.account_id}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          method: "POST",
+          body: JSON.stringify(payload.data),
+        }
+      );
+
+      if (!res.ok) {
+        const error = await res.json();
+        toast.error(
+          `${new Error(error.message || "Failed to create product version")}`,
+          {
+            position: "top-right",
+            autoClose: 2000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: false,
+            draggable: true,
+            progress: undefined,
+          }
+        );
+      }
+      const data = await res.json();
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
 //thằng này lấy thông tin của người dùng
 export const ChangeStateOrder = createAsyncThunk(
-  "account/ChangeStateOrder",
+  "order/ChangeStateOrder",
   async (payload, { rejectWithValue }) => {
     try {
       const res = await fetch(
