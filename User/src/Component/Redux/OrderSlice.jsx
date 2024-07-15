@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { toast } from "react-toastify";
 import { CheckEmailV2 } from "./AccountSlice";
+import useWebSocket from "../../SocketContext";
 const url = "http://26.232.136.42:8080/api";
 const OrderSlice = createSlice({
   name: "order",
@@ -14,33 +15,33 @@ const OrderSlice = createSlice({
       state.order = action.payload;
       localStorage.setItem("order", JSON.stringify(state.order));
     },
-   UpdateItemStyle: (state, action) => {
-  console.log(action.payload);
-  const index1 = state.order.findIndex(
-    (el) =>
-      el.productID === action.payload.olddata.productID &&
-      el.colorID === action.payload.olddata.colorID &&
-      el.sizeID === action.payload.olddata.sizeID
-  );
-  console.log(index1);
-  if (index1 !== -1) {
-    state.order = state.order.map((el, index) =>
-      index === index1
-        ? {
-            ...el,
-            colorID: action.payload.newdata.catetoryColor,
-            sizeID: action.payload.newdata.catetorySize,
-            color: action.payload.newdata.color,
-            size: action.payload.newdata.sizeEnum,
-            price_base: action.payload.newdata.price_base,
-            product_price: action.payload.newdata.price_sale,
-            updatedAt: new Date().toISOString(),
-          }
-        : el
-    );
-  }
-  localStorage.setItem("order", JSON.stringify(state.order));
-},
+    UpdateItemStyle: (state, action) => {
+      console.log(action.payload);
+      const index1 = state.order.findIndex(
+        (el) =>
+          el.productID === action.payload.olddata.productID &&
+          el.colorID === action.payload.olddata.colorID &&
+          el.sizeID === action.payload.olddata.sizeID
+      );
+      console.log(index1);
+      if (index1 !== -1) {
+        state.order = state.order.map((el, index) =>
+          index === index1
+            ? {
+                ...el,
+                colorID: action.payload.newdata.catetoryColor,
+                sizeID: action.payload.newdata.catetorySize,
+                color: action.payload.newdata.color,
+                size: action.payload.newdata.sizeEnum,
+                price_base: action.payload.newdata.price_base,
+                product_price: action.payload.newdata.price_sale,
+                updatedAt: new Date().toISOString(),
+              }
+            : el
+        );
+      }
+      localStorage.setItem("order", JSON.stringify(state.order));
+    },
     UpdateQuantity: (state, action) => {
       const index = state.order.findIndex(
         (el) =>
@@ -236,7 +237,7 @@ export const UpdateOrderItemStyle = createAsyncThunk(
   }
 );
 
-//thằng này tạo order có trạng thái prepare 
+//thằng này tạo order có trạng thái prepare
 export const CreateOrderPrepare = createAsyncThunk(
   "order/CreateOrderPrepare",
   async (payload, { rejectWithValue }) => {
@@ -360,8 +361,8 @@ export const CreateOrder = (payload) => {
           phoneNumber: payload.phoneNumber,
         })
       );
-      console.log(payload)
-      console.log(getState().order.order)
+      console.log(payload);
+      console.log(getState().order.order);
       const createitem = async () => {
         if (Object.entries(getState().account.infor).length == 0) {
           const object = getState().order.order.map((el) => ({
@@ -378,7 +379,7 @@ export const CreateOrder = (payload) => {
             color: el.color,
             size: el.sizeEnum,
           }));
-          console.log(object)
+          console.log(object);
           await dispatch(OrderSlice.actions.pushOrder([]));
           for (const el of object) {
             await dispatch(CreateOrderItem(el));
@@ -386,9 +387,9 @@ export const CreateOrder = (payload) => {
         }
       };
       await createitem();
-      console.log(getState().order)
+      console.log(getState().order);
       const idorder = getState().order.order[0].orders_id;
-      await dispatch(
+      const data = await dispatch(
         ChangeStateOrder({
           account_id: idaccount.payload,
           data: {
@@ -398,6 +399,7 @@ export const CreateOrder = (payload) => {
           },
         })
       );
+      useWebSocket(data);
       await dispatch(OrderSlice.actions.pushOrder([]));
     } catch (error) {
       toast.error(`${new Error(error.message || "Failed to create order")}`, {
