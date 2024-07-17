@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { toast } from "react-toastify";
 import { CheckEmailV2 } from "./AccountSlice";
-import useWebSocket from "../../SocketContext";
+import UseWebSocket from "../../SocketContext";
 const url = "http://26.232.136.42:8080/api";
 const OrderSlice = createSlice({
   name: "order",
@@ -389,7 +389,7 @@ export const CreateOrder = (payload) => {
       await createitem();
       console.log(getState().order);
       const idorder = getState().order.order[0].orders_id;
-      const data = await dispatch(
+       await dispatch(
         ChangeStateOrder({
           account_id: idaccount.payload,
           data: {
@@ -399,8 +399,28 @@ export const CreateOrder = (payload) => {
           },
         })
       );
-      useWebSocket(data);
       await dispatch(OrderSlice.actions.pushOrder([]));
+    const role = 'admin'; // hoặc role khác mà bạn muốn truyền
+    const socketUrl = `ws://26.232.136.42:8080/ws/product?roles=${role}`;
+    const socket = new WebSocket(socketUrl);
+      socket.onopen = () => {
+        console.log('Connected to WebSocket');
+        const data = { type:"apiRequest", url:`http://26.232.136.42:8080/api/orders/${idorder}`};
+          socket.send(JSON.stringify(data));
+      };
+      
+      socket.onmessage = (event) => {
+        console.log('Message from server ', event.data);
+      };
+      socket.onerror = (error) => {
+        console.error('WebSocket Error: ', error);
+      };
+
+      // Đóng kết nối WebSocket khi component unmount
+      return () => {
+        socket.close();
+      }
+      // UseWebSocket({id:78})
     } catch (error) {
       toast.error(`${new Error(error.message || "Failed to create order")}`, {
         position: "top-right",

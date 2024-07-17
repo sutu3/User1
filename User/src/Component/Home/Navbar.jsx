@@ -52,9 +52,9 @@ import OrderSlice, {
 const arr = [
   { name: "Home", link: "/" },
   { name: "About Us", link: "/" },
-  { name: "Male", link: "/" },
-  { name: "Female", link: "/" },
-  { name: "Unisex", link: "/" },
+  { name: "Male", link: "/gender?name=Nam" },
+  { name: "Female", link: "/gender?name=Nữ" },
+  { name: "Unisex", link: "/gender?name=Unisex" },
 ];
 const showToast = () => {
   toast.success("hello", {

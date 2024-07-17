@@ -1,3 +1,4 @@
+// import { webpack } from 'webpack'
 /** @type {import('tailwindcss').Config} */
 export default {
   content: [
@@ -9,6 +10,10 @@ export default {
     extend: {},
   },
   darkMode: "class",
-  plugins: []
+  plugins: [
+    // new webpack.DefinePlugin({
+    //   global: 'window'
+    // })
+  ]
 }
 

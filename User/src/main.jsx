@@ -9,6 +9,7 @@ import store from "./Component/Redux/Store.jsx";
 import Home from './Component/Home/index'
 import Cart from './Component/Cart/index'
 import User from './Component/User/index'
+import Gender from './Component/Genderpage/index.jsx'
 ReactDOM.createRoot(document.getElementById("root")).render(
   <NextUIProvider>
     <Provider store={store}>
@@ -19,6 +20,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
               <Route path='/' element={<Home/>}/>
               <Route path="/cart" element={<Cart/>}/>
               <Route path="/infor" element={<User/>}/>
+              <Route path="gender" element={<Gender/>}/>
             </Route>
           </Routes>
         </BrowserRouter>

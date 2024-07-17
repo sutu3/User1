@@ -8,7 +8,7 @@ import Navbar from "./Component/Home/Navbar";
 import { useDispatch } from "react-redux";
 import { FetchInfom, ProductFecth } from "./Component/Redux/ProductSlice";
 import { Outlet } from "react-router-dom";
-// import useSocket from "./Component/User/Test";
+import useSocket from "./SocketContext";
 function App() {
   const dispatch = useDispatch();
  
@@ -18,6 +18,7 @@ function App() {
     };
     fetch();
   }, []);
+  // useSocket();
   return (
     <div className="w-full h-full flex flex-row">
       <div className="w-full h-full flex flex-col">
