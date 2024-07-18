@@ -298,7 +298,7 @@ const Index = () => {
           <div className="text-2xl font-bold font-mono">Order Summary</div>
           <div className="w-full justify-between flex-row flex">
             <div className="font-serif text-xl">Sub Total</div>
-            <div className="font-bold">$232.000</div>
+            <div className="font-bold">{order.reduce((acc,el)=>acc+(el.product_price*el.quantity),0).toLocaleString("vi-VN")} vnđ</div>
           </div>
           <div className="w-full justify-between flex-row flex">
             <div className="font-serif text-xl">Tax</div>
@@ -310,7 +310,7 @@ const Index = () => {
           </div>
           <div className="w-full justify-between flex-row flex">
             <div className="font-serif text-xl">Total</div>
-            <div className="font-bold  text-2xl">$232.000</div>
+            <div className="font-bold  text-2xl">{order.reduce((acc,el)=>acc+(el.product_price*el.quantity),0).toLocaleString("vi-VN")} vnđ</div>
           </div>
           <div className="w-full">
             {flat < 1 ? (
