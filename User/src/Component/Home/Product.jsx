@@ -13,7 +13,7 @@ import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
 import { infor, orderNoneSignup } from "../Redux/Selector";
 import { useDispatch } from "react-redux";
-import OrderSlice, { CreateOrderItem } from "../Redux/OrderSlice";
+import OrderSlice, { CreateOrderItem, UpdateOrderItem } from "../Redux/OrderSlice";
 const Product = ({ product }) => {
   const order = useSelector(orderNoneSignup);
   const Infor = useSelector(infor);
@@ -44,9 +44,9 @@ const Product = ({ product }) => {
       sizeID: data.catetorySize,
       colorID: data.catetoryColor,
       createAt: new Date().toISOString(),
-      updatedAt:'',
-      color:data.color,
-      size:data.sizeEnum
+      updatedAt: "",
+      color: data.color,
+      size: data.sizeEnum,
     };
     const arr = order.find(
       (el) =>
@@ -54,9 +54,9 @@ const Product = ({ product }) => {
         el.colorID == object.colorID &&
         el.productID == object.productID
     );
-    console.log(Infor.account_id!=undefined);
+    console.log(Infor.account_id != undefined);
     if (!arr) {
-      if (Object.entries(Infor).length!=0) {
+      if (Object.entries(Infor).length != 0) {
         await dispatch(
           CreateOrderItem({
             ...object,
@@ -67,22 +67,33 @@ const Product = ({ product }) => {
         dispatch(OrderSlice.actions.pushOrder([...order, object]));
       }
     } else {
-      const arr1 = {
-        ...arr,
-        quantity: arr.quantity + 1,
-        create_at: new Date().toISOString(),
-      };
-      const arr2 = order.map((el) => {
-        if (
-          el.sizeID === arr1.sizeID &&
-          el.colorID === arr1.colorID &&
-          el.productID === arr1.productID
-        ) {
-          return arr1;
-        }
-        return el;
-      });
-      dispatch(OrderSlice.actions.pushOrder(arr2));
+      if (Object.entries(Infor).length != 0) {
+        await dispatch(
+          UpdateOrderItem({
+            order_items_id: arr.order_items_id,
+            product_price: arr.product_price,
+            price_base: arr.price_base,
+            quantity: arr.quantity + 1,
+          })
+        );
+      } else {
+        const arr1 = {
+          ...arr,
+          quantity: arr.quantity + 1,
+          create_at: new Date().toISOString(),
+        };
+        const arr2 = order.map((el) => {
+          if (
+            el.sizeID === arr1.sizeID &&
+            el.colorID === arr1.colorID &&
+            el.productID === arr1.productID
+          ) {
+            return arr1;
+          }
+          return el;
+        });
+        dispatch(OrderSlice.actions.pushOrder(arr2));
+      }
     }
   };
   return (

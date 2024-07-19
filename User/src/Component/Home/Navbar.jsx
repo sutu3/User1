@@ -71,7 +71,6 @@ export default function App() {
   const order = useSelector(orderNoneSignup);
   const product = useSelector(Product);
   const dispatch = useDispatch();
-
   useEffect(() => {
     const newproduct = order.map((el) => {
       const productItem = product.find(
@@ -494,7 +493,8 @@ export default function App() {
                     key="Orders"
                     endContent={<FontAwesomeIcon icon={faTruckRampBox} />}
                   >
-                    Orders
+                  <Link to={'order'}>Orders</Link>
+                    
                   </DropdownItem>
                   <DropdownItem
                     key="new_project"
