@@ -14,6 +14,7 @@ import { useSelector } from "react-redux";
 import { infor, orderNoneSignup } from "../Redux/Selector";
 import { useDispatch } from "react-redux";
 import OrderSlice, { CreateOrderItem, UpdateOrderItem } from "../Redux/OrderSlice";
+import { Link } from "react-router-dom";
 const Product = ({ product }) => {
   const order = useSelector(orderNoneSignup);
   const Infor = useSelector(infor);
@@ -210,7 +211,7 @@ const Product = ({ product }) => {
                     </div>
                   </div>
                   <Button className="border-[2px] border-slate-400 w-[200px] flex m-auto">
-                    Vào Giỏ Hàng
+                  <Link to={"/cart"}>Vào Giỏ Hàng</Link>
                   </Button>
                 </div>,
                 {
