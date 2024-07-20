@@ -12,6 +12,7 @@ import useSocket from "./SocketContext";
 import useWebSocket from "./Component/Wedsocket/Order";
 import { infor } from "./Component/Redux/Selector";
 import { useSelector } from "react-redux";
+import { GetOrderbyID } from "./Component/Redux/AccountSlice";
 const Status={
   Shipping: 'Đơn Hàng của bạn đang được giao',
   Completed: 'Đơn Hàng của bạn đã giao đến',
@@ -39,8 +40,10 @@ function App() {
   useWebSocket(
     `ws://26.232.136.42:8080/ws/orderstatus?idAccount=${Object.keys(Infor).length!=0?Infor.account_id:-1}`,
     async(event) => {
-      const newOrder = JSON.parse(event.data);
-      await dispatch(GetproductbyID(newOrder.split(' ')[0]));
+      // alert(event.data)
+      const newOrder = event.data;
+      alert(newOrder)
+      await dispatch(GetOrderbyID(newOrder.split(' ')[0]));
       toast.info(`${Status[newOrder.split(' ')[1]]}`, {
         position: 'top-right',
         autoClose: 2000,
