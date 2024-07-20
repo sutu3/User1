@@ -46,7 +46,15 @@ const AccountSlice = createSlice({
         };
         localStorage.setItem("infor", JSON.stringify(state.infor));
       })
-     
+      .addCase(GetOrderbyID.fulfilled, (state, action) => {
+        state.infor = {
+         ...state.infor,
+          orders: state.infor.orders.map((el) =>
+            el.orders_id == action.payload.orders_id ? action.payload : el
+          ),
+        };
+        localStorage.setItem("infor", JSON.stringify(state.infor));
+      })
       .addCase(CreateOrderPrepare.fulfilled, (state, action) => {
         state.infor = {
           ...state.infor,
@@ -413,6 +421,39 @@ export const CheckLogin = (payload) => {
     }
   };
 };
+export const GetOrderbyID = createAsyncThunk(
+  "account/GetOrderbyID",
+  async (payload, { rejectWithValue }) => {
+    try {
+      const res = await fetch(`${url}/orders/${payload}`, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        method: "GET",
+      });
+
+      if (!res.ok) {
+        const error = await res.json();
+        toast.error(
+          `${new Error(error.message || "Failed to create purchase item")}`,
+          {
+            position: "top-right",
+            autoClose: 2000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: false,
+            draggable: true,
+            progress: undefined,
+          }
+        );
+      } 
+      const data = await res.json();
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
 export const OrderChangeStatus = createAsyncThunk(
   "order/OrderChangeStatus",
   async (payload, { rejectWithValue }) => {

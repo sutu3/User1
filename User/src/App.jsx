@@ -10,7 +10,15 @@ import { FetchInfom, GetproductbyID, ProductFecth } from "./Component/Redux/Prod
 import { Outlet } from "react-router-dom";
 import useSocket from "./SocketContext";
 import useWebSocket from "./Component/Wedsocket/Order";
+import { infor } from "./Component/Redux/Selector";
+import { useSelector } from "react-redux";
+const Status={
+  Shipping: 'Đơn Hàng của bạn đang được giao',
+  Completed: 'Đơn Hàng của bạn đã giao đến',
+  Cancel: 'Đơn Hàng của bạn đã hủy',
+}
 function App() {
+  const Infor=useSelector(infor)
   const dispatch = useDispatch();
  useWebSocket(
     'ws://26.232.136.42:8080/ws/purchase',
@@ -18,6 +26,22 @@ function App() {
       const newOrder = JSON.parse(event.data);
       await dispatch(GetproductbyID(newOrder))
       toast.info('Hệ thống vừa có sản phẩm mới', {
+        position: 'top-right',
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: false,
+        draggable: true,
+        progress: undefined,
+      });
+    },
+  );
+  useWebSocket(
+    `ws://26.232.136.42:8080/ws/orderstatus?idAccount=${Object.keys(Infor).length!=0?Infor.account_id:-1}`,
+    async(event) => {
+      const newOrder = JSON.parse(event.data);
+      await dispatch(GetproductbyID(newOrder.split(' ')[0]));
+      toast.info(`${Status[newOrder.split(' ')[1]]}`, {
         position: 'top-right',
         autoClose: 2000,
         hideProgressBar: false,
