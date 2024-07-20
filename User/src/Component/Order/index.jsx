@@ -7,15 +7,15 @@ const Index = () => {
   const [selected, setSelected] = useState("Home");
   console.log(selected)
   const base = {
-    All:<Home />,
-    Prepare: <Home />,
-    Pending: <Home />,
-    Shipping: <Home />,
-    Complete: <Home />,
-    Cancel: <Home />,
+    All:<Home filter={''}/>,
+    Prepare: <Home filter={'Prepare'}/>,
+    Pending: <Home filter={'Pending'}/>,
+    Shipping: <Home filter={'Shipping'}/>,
+    Complete: <Home filter={'Complete'}/>,
+    Cancel: <Home filter={'Cancel'}/>,
   };
   return (
-    <div className="flex flex-col gap-2 w-full ">
+    <div className="flex flex-col gap-2 w-full bg-[#f8f8f8] -translate-y-3">
       <div className="w-full flex justify-center">
         <Tabs
         color="secondary"
@@ -29,12 +29,12 @@ const Index = () => {
             panel: "",
           }}
         >
-          <Tab  className={` ${selected=='All'?'border-b-[4px] outline-none border-[#f2a93b] text-[#f2a93b]':''}`} key="All" title="Tất Cả" />
-          <Tab className={`${selected=='Prepare'?'border-b-[2px] border-[#f2a93b] text-[#f2a93b]':''}`} key="Prepare" title="Chờ thanh Toán" />
-          <Tab className={`${selected=='Pending'?'border-b-[2px] border-[#f2a93b] text-[#f2a93b]':''}`} key="Pending" title="Chuẩn bị" />
-          <Tab className={`${selected=='Shipping'?'border-b-[2px] border-[#f2a93b] text-[#f2a93b]':''}`} key="Shipping" title="Vận Chuyển" />
-          <Tab className={`${selected=='Complete'?'border-b-[2px] border-[#f2a93b] text-[#f2a93b]':''}`} key="Complete" title="Hoàn Thành" />
-          <Tab className={`${selected=='Cancel'?'border-b-[2px] border-[#f2a93b] text-[#f2a93b]':''}`} key="Cancel" title="Đã Hủy" />
+          <Tab  className={` ${selected=='All'?'border-b-[4px] outline-none border-[#3fd6ff] text-[#3fd6ff]':''}`} key="All" title="Tất Cả" />
+          <Tab className={`${selected=='Prepare'?'border-b-[2px] border-[#3fd6ff] text-[#3fd6ff]':''}`} key="Prepare" title="Chờ thanh Toán" />
+          <Tab className={`${selected=='Pending'?'border-b-[2px] border-[#3fd6ff] text-[#3fd6ff]':''}`} key="Pending" title="Chuẩn bị" />
+          <Tab className={`${selected=='Shipping'?'border-b-[2px] border-[#3fd6ff] text-[#3fd6ff]':''}`} key="Shipping" title="Vận Chuyển" />
+          <Tab className={`${selected=='Complete'?'border-b-[2px] border-[#3fd6ff] text-[#3fd6ff]':''}`} key="Complete" title="Hoàn Thành" />
+          <Tab className={`${selected=='Cancel'?'border-b-[2px] border-[#3fd6ff] text-[#3fd6ff]':''}`} key="Cancel" title="Đã Hủy" />
         </Tabs>
       </div>
       <div className="w-[1200px] m-auto ">{base[selected]}</div>

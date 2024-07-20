@@ -7,6 +7,7 @@ import { CalendarDate, parseDate } from "@internationalized/date";
 //import { UpdateInforUser } from "../Redux/CustummerSlice";
 import { toast } from "react-toastify";
 import { infor } from "../Redux/Selector";
+import { UpdateInforUser } from "../Redux/AccountSlice";
 const Index = () => {
   const dispatch = useDispatch();
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -28,11 +29,10 @@ const Index = () => {
   };
   const handleActionClick= async()=>{
     setloading(true)
-    // await dispatch(UpdateInforUser({
-    //   user:user,
-    //   address:address,
-    //   image:imge
-    // }))
+    await dispatch(UpdateInforUser({
+      user:user,
+      image:imge
+    }))
     setloading(false)
     onClose()
     toast.success(`Action Change complete`, {
@@ -46,7 +46,7 @@ const Index = () => {
         });
   }
   return (
-    <div className="w-[1350px] h-full flex translate-x-5 flex-row mt-0">
+    <div className="w-[1350px] h-full flex translate-x-5 flex-row mt-0 justify-center">
       <div className="w-[30%] h-full flex flex-col p-4">
         <div className="pb-3">
           <Image
@@ -217,41 +217,29 @@ const Index = () => {
               placeholder="Enter your email"
             />
         </div>
-        
         </div>
         <div className="w-full flex flex-row mt-10 justify-around">
-        <div className="w-1/3 flex justify-center items-center">
+        <div className="w-1/2 flex justify-center items-center">
           <Input
-              type="text"
-              label="Address"
-              value={address.state}
-              onChange={(e)=>setaddress({...address,state:e.target.value})}
+              type="number"
+              label="Weight"
+              value={user.weight}
+              onChange={(e)=>setuser({...user, weight: e.target.value})}
               className=""
-              classNames={{input:'border-[2px] border-slate-300 p-2 rounded-lg w-[180px]'}}
+              classNames={{input:'border-[2px] border-slate-300 p-2 rounded-lg w-[280px]'}}
               labelPlacement={'outside-left'}
               placeholder="Enter your email"
             />
         </div>
-        <div className="w-1/3 flex justify-center items-center">
+        <div className="w-1/2 flex justify-center items-center">
           <Input
-              type="text"
-              label="district"
-              value={address.city}
-              onChange={(e)=>setaddress({...address,city:e.target.value})}
+              type="number"
+              label="Height"
+              value={user.height}
+              onChange={(e)=>setuser({...user, height
+              : e.target.value})}
               className=""
-              classNames={{input:'border-[2px] border-slate-300 p-2 rounded-lg w-[180px]'}}
-              labelPlacement={'outside-left'}
-              placeholder="Enter your email"
-            />
-        </div>
-        <div className="w-1/3 flex justify-center items-center">
-          <Input
-              type="text"
-              label="City"
-              value={address.country}
-              onChange={(e)=>setaddress({...address,country:e.target.value})}
-              className=""
-              classNames={{input:'border-[2px] border-slate-300 p-2 rounded-lg w-[180px]'}}
+              classNames={{input:'border-[2px] border-slate-300 p-2 rounded-lg w-[280px]'}}
               labelPlacement={'outside-left'}
               placeholder="Enter your email"
             />

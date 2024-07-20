@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link,useNavigate } from "react-router-dom";
 import {
   Navbar,
   NavbarBrand,
@@ -30,9 +30,11 @@ import {
   faMagnifyingGlass,
   faMinus,
   faPlus,
+  faLocationDot,
   faRightToBracket,
   faTrash,
   faTruckRampBox,
+  faList,
   faUser,
 } from "@fortawesome/free-solid-svg-icons";
 import { toast } from "react-toastify";
@@ -68,6 +70,7 @@ const showToast = () => {
   });
 };
 export default function App() {
+  const navigate=useNavigate()
   const order = useSelector(orderNoneSignup);
   const product = useSelector(Product);
   const dispatch = useDispatch();
@@ -214,16 +217,16 @@ export default function App() {
         />
         <div className="flex   justify-start">
           <Dropdown
+          showArrow
+              radius="sm"
+              classNames={{
+                base: "before:bg-default-200", // change arrow background
+                content: "p-0 border-small border-divider bg-background",
+              }}
             aria-label="Multiple selection example"
             variant="flat"
-            closeOnSelect={false}
-            disallowEmptySelection
-            showArrow
-            radius="sm"
-            classNames={{
-              base: "before:bg-default-200", // change arrow background
-              content: "p-0 border-small border-divider bg-background",
-            }}
+            
+          
           >
             <DropdownTrigger>
               <Button
@@ -259,13 +262,17 @@ export default function App() {
                 ],
               }}
             >
-              <DropdownItem className="">
-                <div className="w-full flex justify-between items-center">
-                  <div>{order.length} Sản Phẩm</div>
-                  <div className="font-mono text-lg hover:text-[#6542fd] text-blue-300">
-                    <Link to={"/cart"}>Xem tất cả</Link>
-                  </div>
-                </div>
+            {/* <DropdownItem
+                    key="Orders"
+                    endContent={<FontAwesomeIcon icon={faTruckRampBox} />}
+                  >
+                  <Link to={'order'}>Orders</Link>
+                    
+                  </DropdownItem> */}
+              <DropdownItem className=""
+              startContent={<div>{order.length} Sản Phẩm</div>}
+              >
+                <Link to={"/cart"}>Xem tất cả</Link>
               </DropdownItem>
               {order.map((el) => (
                 <DropdownItem
@@ -498,9 +505,9 @@ export default function App() {
                   </DropdownItem>
                   <DropdownItem
                     key="new_project"
-                    endContent={<FontAwesomeIcon icon={faCartShopping} />}
+                    endContent={<FontAwesomeIcon icon={faLocationDot} />}
                   >
-                    Cart
+                  <Link to={'address'}>Address list</Link>
                   </DropdownItem>
                 </DropdownSection>
                 <DropdownSection aria-label="Help & Feedback">
@@ -512,6 +519,7 @@ export default function App() {
                     className="border-[2px] border-red-400 text-red-400"
                     onClick={() => {
                       localStorage.removeItem("infor");
+                      navigate('/')
                       dispatch(AccountSlice.actions.updateInfor({}));
                       setdisplay(false);
                       const arr = order.map((el) => ({

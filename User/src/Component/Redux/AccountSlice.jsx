@@ -22,6 +22,13 @@ const AccountSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+    .addCase(CreateAddress.fulfilled, (state, action) => {
+        state.infor = {
+          ...state.infor,
+          addresses: [...state.infor.addresses, action.payload],
+        };
+        localStorage.setItem('infor', JSON.stringify(state.infor));
+      })
       .addCase(CreateAccount.fulfilled, (state, action) => {
         state.infor = action.payload;
         localStorage.setItem("infor", JSON.stringify(state.infor));
@@ -30,6 +37,16 @@ const AccountSlice = createSlice({
         state.infor = action.payload;
         localStorage.setItem("infor", JSON.stringify(state.infor));
       })
+      .addCase(OrderChangeStatus.fulfilled, (state, action) => {
+        state.infor = {
+          ...state.infor,
+          orders: state.infor.orders.map((el) =>
+            el.orders_id == action.payload.orders_id ? action.payload : el
+          ),
+        };
+        localStorage.setItem("infor", JSON.stringify(state.infor));
+      })
+     
       .addCase(CreateOrderPrepare.fulfilled, (state, action) => {
         state.infor = {
           ...state.infor,
@@ -76,6 +93,7 @@ export const CheckAccount = createAsyncThunk(
     }
   }
 );
+
 //thằng này tạo mã opt
 export const CreateOTP = createAsyncThunk(
   "account/CreateOTP",
@@ -261,7 +279,7 @@ export const CheckLogin = (payload) => {
       );
       if (checkpass.payload != -1) {
         await dispatch(GetAccountInfor(checkpass.payload));
-        
+
         // Fetch updated state after dispatching GetAccountInfor
         let state = getState();
         let prepareOrder = state.account.infor.orders.find(
@@ -305,7 +323,8 @@ export const CheckLogin = (payload) => {
 
           if (check && arr.length !== 0) {
             const timeclient = new Date(el.createAt).getTime() / 1000;
-            const timeserve = new Date(check.updatedAt || check.createdAt).getTime() / 1000;
+            const timeserve =
+              new Date(check.updatedAt || check.createdAt).getTime() / 1000;
 
             const currentOrder = getState().order.order;
 
@@ -394,5 +413,155 @@ export const CheckLogin = (payload) => {
     }
   };
 };
+export const OrderChangeStatus = createAsyncThunk(
+  "order/OrderChangeStatus",
+  async (payload, { rejectWithValue }) => {
+    try {
+      const res = await fetch(
+        `${url}/orders/updateStatusOrder/${payload.id}?status=${payload.status}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          method: "PUT",
+        }
+      );
 
+      if (!res.ok) {
+        const error = await res.json();
+        toast.error(
+          `${new Error(error.message || "Failed to create purchase item")}`,
+          {
+            position: "top-right",
+            autoClose: 2000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: false,
+            draggable: true,
+            progress: undefined,
+          }
+        );
+      }
+      const data = await res.json();
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+// thằng này cập nhập ảnh của account
+export const Test = createAsyncThunk("account/Test", async (payload) => {
+  console.log(payload);
+  const res = await fetch(`${url}/account/uploadAvatar`, {
+    method: "PUT",
+    body: payload,
+  });
+  const data = await res.text();
+  return data;
+});
+//thằng này tạo address mới
+export const CreateAddress = createAsyncThunk(
+  "account/CreateAddress",
+  async (payload, { rejectWithValue }) => {
+    try {
+      const res = await fetch(`${url}/account/createAddress`, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        method: "POST",
+        body: JSON.stringify(payload),
+      });
+
+      if (!res.ok) {
+        const error = await res.json();
+        toast.error(
+          `${new Error(error.message || "Failed to create new roles")}`,
+          {
+            position: "top-right",
+            autoClose: 2000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: false,
+            draggable: true,
+            progress: undefined,
+          }
+        );
+      }
+      const data = await res.json();
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+//thằng này thay đổi thông tin user
+export const ChangeInforUser = createAsyncThunk(
+  "account/ChangeAddressUser",
+  async (payload, { rejectWithValue }) => {
+    try {
+      const res = await fetch(`${url}/account/updateaccountNoVerifi`, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        method: "PUT",
+        body: JSON.stringify(payload),
+      });
+
+      if (!res.ok) {
+        const error = await res.json();
+        toast.error(
+          `${new Error(error.message || "Failed to create new roles")}`,
+          {
+            position: "top-right",
+            autoClose: 2000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: false,
+            draggable: true,
+            progress: undefined,
+          }
+        );
+      }
+      const data = await res.json();
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+// thằng này để thay đổi thông tin account và avatar
+export const UpdateInforUser = (payload) => {
+  return async function check(dispatch, getState) {
+    try {
+      await dispatch(
+        ChangeInforUser({
+          account_id: payload.user.account_id,
+          username: payload.user.username,
+          password: payload.user.password,
+          email: payload.user.email,
+          height: payload.user.height,
+          weight: payload.user.weight,
+          phoneNumber: payload.user.phoneNumber,
+          dayOfBirth: payload.user.dayOfBirth,
+          gender: payload.user.gender.currentKey,
+        })
+      );
+      const formData = new FormData();
+      formData.append("file", payload.image);
+      formData.append("idAccount", payload.user.account_id);
+      await dispatch(Test(formData));
+      await dispatch(GetAccountInfor(payload.user.account_id));
+    } catch (error) {
+      toast.error(`Message :${error}`, {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: false,
+        draggable: true,
+        progress: undefined,
+      });
+    }
+  };
+};
 export default AccountSlice;

@@ -12,6 +12,7 @@ import User from './Component/User/index'
 import Gender from './Component/Genderpage/index.jsx'
 import  Order  from "./Component/Order/index.jsx";
 import HomeOrder from "./Component/Order/Home.jsx";
+import Address from './Component/Address/index.jsx'
 ReactDOM.createRoot(document.getElementById("root")).render(
   <NextUIProvider>
     <Provider store={store}>
@@ -23,6 +24,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
               <Route path="/cart" element={<Cart/>}/>
               <Route path="/infor" element={<User/>}/>
               <Route path="gender" element={<Gender/>}/>
+              <Route path="address" element={<Address/>}/>
               <Route path="order" element={<Order/>}>
                 <Route path="home" element={<HomeOrder/>}/>
               </Route>
