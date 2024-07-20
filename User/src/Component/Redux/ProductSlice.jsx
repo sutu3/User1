@@ -13,6 +13,10 @@ const ProductSlice=createSlice({
             state.products=action.payload
             localStorage.setItem('product',JSON.stringify(state.products))
         })
+        .addCase(GetproductbyID.fulfilled,(state,action)=>{
+          state.products.push(action.payload)
+          localStorage.setItem('product',JSON.stringify(state.products))
+        })
         .addCase(TypeOfProductFecth.fulfilled,(state,action)=>{
           state.type=action.payload
         })
@@ -35,6 +39,21 @@ export const ProductFecth = createAsyncThunk(
       headers: {
         "Content-Type": "application/json",
       },
+    });
+    const data = await res.json();
+    return data;
+  }
+);
+//thằng này lấy dữ liệu product bằng id
+export const GetproductbyID = createAsyncThunk(
+  "product/Getproduct",
+  async (payload) => {
+    console.log(payload);
+    const res = await fetch(`${url}/product/productshowV3/${payload}`, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+      method: "GET",
     });
     const data = await res.json();
     return data;

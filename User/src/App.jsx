@@ -1,17 +1,33 @@
 import { useEffect, useState } from "react";
-import { ToastContainer } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import reactLogo from "./assets/react.svg";
 import viteLogo from "/vite.svg";
 import "./App.css";
 import Test from "./Test";
 import Navbar from "./Component/Home/Navbar";
 import { useDispatch } from "react-redux";
-import { FetchInfom, ProductFecth } from "./Component/Redux/ProductSlice";
+import { FetchInfom, GetproductbyID, ProductFecth } from "./Component/Redux/ProductSlice";
 import { Outlet } from "react-router-dom";
 import useSocket from "./SocketContext";
+import useWebSocket from "./Component/Wedsocket/Order";
 function App() {
   const dispatch = useDispatch();
- 
+ useWebSocket(
+    'ws://26.232.136.42:8080/ws/purchase',
+    async(event) => {
+      const newOrder = JSON.parse(event.data);
+      await dispatch(GetproductbyID(newOrder))
+      toast.info('Hệ thống vừa có sản phẩm mới', {
+        position: 'top-right',
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: false,
+        draggable: true,
+        progress: undefined,
+      });
+    },
+  );
   useEffect(() => {
     const fetch = async () => {
       await dispatch(FetchInfom());
