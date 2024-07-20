@@ -177,6 +177,11 @@ const Product = ({ product }) => {
         <CardFooter className="flex w-1/2 p-0 pb-2 m-auto mt-0">
           <Button
             onClick={() => {
+              
+            if(!product.categories.find(
+              (el) => el.color == color && el.sizeEnum == size
+            ).price_sale == 0)
+            {
               handlepushItem();
               toast(
                 <div className="w-full h-full flex flex-col">
@@ -218,6 +223,21 @@ const Product = ({ product }) => {
                   progress: undefined,
                 }
               );
+            }
+             else{
+              toast.info(
+          `Chúng tui đang trong quá trình nhập hàng`,
+          {
+            position: "top-right",
+            autoClose: 2000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: false,
+            draggable: true,
+            progress: undefined,
+          }
+        );
+             } 
             }}
           >
             Add to cart
