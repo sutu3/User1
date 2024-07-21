@@ -293,7 +293,6 @@ export const CheckLogin = (payload) => {
         let prepareOrder = state.account.infor.orders.find(
           (el) => el.status === "Prepare"
         );
-
         if (!prepareOrder) {
           await dispatch(
             CreateOrderPrepare({

@@ -13,7 +13,7 @@ const List = () => {
   }, [list]);
 
   return (
-    <div className='w-full flex flex-row flex-wrap gap-3 justify-center bg-[#f4f4f4] pt-3'>
+    <div className='w-full flex flex-row flex-wrap gap-3 justify-center bg-[#f4f4f4] pt-3 pb-8'>
       {productlist &&
         productlist
           .filter((el) => (filter ? el.type.includes(filter) : true))

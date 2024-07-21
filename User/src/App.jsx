@@ -42,7 +42,6 @@ function App() {
     async(event) => {
       // alert(event.data)
       const newOrder = event.data;
-      alert(newOrder)
       await dispatch(GetOrderbyID(newOrder.split(' ')[0]));
       toast.info(`${Status[newOrder.split(' ')[1]]}`, {
         position: 'top-right',
