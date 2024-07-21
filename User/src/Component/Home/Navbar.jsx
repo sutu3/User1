@@ -46,11 +46,12 @@ import AccountSlice, {
   CreateOTP,
 } from "../Redux/AccountSlice";
 import { useSelector } from "react-redux";
-import { infor, orderNoneSignup, Product } from "../Redux/Selector";
+import { infor, orderNoneSignup, Product, Search } from "../Redux/Selector";
 import OrderSlice, {
   DeleteOrderItem,
   UpdateOrderItem,
 } from "../Redux/OrderSlice";
+import FilterScice from "../Redux/FilterSlice";
 const arr = [
   { name: "Home", link: "/" },
   { name: "About Us", link: "/" },
@@ -115,6 +116,7 @@ export default function App() {
     email: "",
     pass: "",
   });
+  const search=useSelector(Search)
   const handleSignIn = () => {
     setflat(true);
     onOpen();
@@ -196,13 +198,14 @@ export default function App() {
       <div className="w-[400px] flex flex-row h-full items-center gap-5 justify-start">
         {arr.map((el, index) => (
           <div key={index} className="font-bold">
-            <Link to={el.link}>{el.name}</Link>
+            <Link to={el.link} onClick={()=>dispatch(FilterScice.actions.filtersearch(''))}>{el.name}</Link>
           </div>
         ))}
       </div>
       <div className="w-[500px] flex flex-row items-center gap-3">
         <Input
-          className=""
+          value={search}
+          onValueChange={(e)=>dispatch(FilterScice.actions.filtersearch(e))}
           classNames={{
             base: "w-[300px] h-10",
             mainWrapper: "h-full",

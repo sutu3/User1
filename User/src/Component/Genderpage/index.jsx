@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useLocation } from "react-router-dom";
-import { Product } from "../Redux/Selector";
+import { Product, Search } from "../Redux/Selector";
 import { useSelector } from "react-redux";
 import Product1 from "../Home/Product";
 import Filter from "./filter";
@@ -13,7 +13,7 @@ const Index = () => {
   const [size, setsize] = useState(new Set([]));
   const [color, setcolor] = useState(new Set([]));
   const initialLoad = useRef(true);
-
+  const search=useSelector(Search)
   // Thiết lập lại trạng thái khi route thay đổi
   useEffect(() => {
     if (initialLoad.current) {
@@ -81,7 +81,7 @@ const Index = () => {
         </div>
         <div className="w-full h-full flex flex-row flex-wrap">
           {product &&
-            product.map((el) => <Product1 key={el.product_id} product={el} />)}
+            product.filter((el)=>el.name.includes(search)).map((el) => <Product1 key={el.product_id} product={el} />)}
         </div>
       </div>
     </div>

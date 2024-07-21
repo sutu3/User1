@@ -4,7 +4,8 @@ const FilterScice=createSlice({
     name:'filter',
     initialState:{
         test:[] ,
-        type:''
+        type:'',
+        search:''
     },
     reducers:{
         filtertype:(state,action)=>{
@@ -12,7 +13,10 @@ const FilterScice=createSlice({
         },
         Test:(state,action)=>{
             state.test.push(action.payload)
-        }
+        },
+        filtersearch:(state,action)=>{
+            state.search=action.payload
+        },
     }
 })
 export default FilterScice

@@ -44,7 +44,7 @@ const Product = ({ product }) => {
       productID: product.product_id,
       sizeID: data.catetorySize,
       colorID: data.catetoryColor,
-      createAt: new Date().toISOString(),
+      createAt: new Date(new Date().getTime() +  7 * 60 * 60 * 1000).toISOString().slice(0, -1),
       updatedAt: "",
       color: data.color,
       size: data.sizeEnum,
