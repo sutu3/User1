@@ -29,9 +29,10 @@ const Index = () => {
   };
   const handleActionClick= async()=>{
     setloading(true)
+    console.log(imge)
     await dispatch(UpdateInforUser({
       user:user,
-      image:imge
+      image:imge?imge:'https://haycafe.vn/wp-content/uploads/2021/11/Anh-avatar-dep-chat-lam-hinh-dai-dien.jpg'
     }))
     setloading(false)
     onClose()

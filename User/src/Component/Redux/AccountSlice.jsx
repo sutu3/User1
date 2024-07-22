@@ -573,6 +573,7 @@ export const ChangeInforUser = createAsyncThunk(
 export const UpdateInforUser = (payload) => {
   return async function check(dispatch, getState) {
     try {
+      console.log(payload);
       await dispatch(
         ChangeInforUser({
           account_id: payload.user.account_id,
@@ -587,9 +588,11 @@ export const UpdateInforUser = (payload) => {
         })
       );
       const formData = new FormData();
-      formData.append("file", payload.image);
-      formData.append("idAccount", payload.user.account_id);
-      await dispatch(Test(formData));
+      if(payload.image!=null){
+        formData.append("file", payload.image);
+        formData.append("idAccount", payload.user.account_id);
+        await dispatch(Test(formData));
+      }
       await dispatch(GetAccountInfor(payload.user.account_id));
     } catch (error) {
       toast.error(`Message :${error}`, {
